@@ -10,8 +10,20 @@ class VacanciesPage(BasePage):
 
     def click_post_vacancy(self):
         """'Vakansiya joylashtirish' tugmasini bosish"""
-        self.post_vacancy_button.click()
+        self.logger.info("'Vakansiya joylashtirish' tugmasi bosilmoqda...")
+        try:
+            self.post_vacancy_button.click()
+            self.logger.info("'Vakansiya joylashtirish' tugmasi muvaffaqiyatli bosildi")
+        except Exception as e:
+            self.logger.error(f"'Vakansiya joylashtirish' tugmasini bosishda xatolik: {e}")
+            raise
 
     def verify_on_my_vacancies_page(self):
         """'Mening vakansiyalarim' sahifasida ekanligini tekshirish"""
-        expect(self.my_vacancies_header).to_be_visible()
+        self.logger.info("'Mening vakansiyalarim' sahifasida ekanligini tekshirish...")
+        try:
+            expect(self.my_vacancies_header).to_be_visible()
+            self.logger.info("'Mening vakansiyalarim' sahifasi tasdiqlandi")
+        except AssertionError as e:
+            self.logger.error("'Mening vakansiyalarim' sahifasi topilmadi")
+            raise

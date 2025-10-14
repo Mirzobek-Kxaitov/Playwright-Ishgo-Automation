@@ -1,23 +1,19 @@
-import pytest
 from playwright.sync_api import Page, expect
 from pages.vacancies_page import VacanciesPage
-from pages.login_page import LoginPage
-from config import BASE_URL, PHONE_NUMBER
+from config import BASE_URL
 
-def test_navigate_to_my_vacancies(page: Page, login_page: LoginPage, vacancies_page: VacanciesPage):
+
+def test_navigate_to_my_vacancies(authenticated_page: Page, vacancies_page: VacanciesPage):
     """
-    Saytga login qilib, "Vakansiya joylashtirish" tugmasini bosganda
+    Tizimga kirgan foydalanuvchi "Vakansiya joylashtirish" tugmasini bosganda
     "Mening vakansiyalarim" sahifasiga o'tishini tekshiradi.
+
+    Pre-condition: Foydalanuvchi tizimga kirgan (authenticated_page fixture orqali)
     """
-    # Himoya: .env faylidan telefon raqami yuklanganini tekshirish
-    if not PHONE_NUMBER:
-        pytest.fail("DIQQAT: Telefon raqami .env faylidan topilmadi. Iltimos, .env faylini tekshiring.")
+    # authenticated_page fixture allaqachon login qilgan, shuning uchun to'g'ridan-to'g'ri test qilamiz
+    page = authenticated_page
 
-    # 1. Saytga kirish (yoki tizimda ekanligini tasdiqlash)
-    login_page.navigate() # Asosiy sahifaga o'tish
-    login_page.login(PHONE_NUMBER)
-
-    # Login/tasdiqlashdan so'ng "Vakansiyalar" sahifasida ekanligini tekshirish
+    # 1. "Vakansiyalar" sahifasida ekanligini tasdiqlash
     expect(page).to_have_url(f"{BASE_URL}/vacancies")
 
     # 2. "Vakansiya joylashtirish" tugmasini bosish
@@ -26,6 +22,6 @@ def test_navigate_to_my_vacancies(page: Page, login_page: LoginPage, vacancies_p
     # 3. "Mening vakansiyalarim" sahifasiga o'tganini tekshirish
     vacancies_page.verify_on_my_vacancies_page()
 
-    # Qo'shimcha tekshiruv: URL manzilini tekshirish
+    # 4. URL manzilini tekshirish
     expected_url = f"{BASE_URL}/vacancies/my"
     expect(page).to_have_url(expected_url)

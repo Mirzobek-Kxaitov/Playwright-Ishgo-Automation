@@ -12,8 +12,8 @@ class VacancyListPage(BasePage):
         super().__init__(page)
         # Vakansiya kartochkalari - to'g'ri CSS class selector
         self.vacancy_cards = self.page.locator("[class*='vacancy_card_wrapper'], [class*='vacancy_card__']")
-        # Sahifa scroll konteyner
-        self.page_container = self.page.locator("body")
+        # Vakansiyalar ro'yxati scroll konteyner
+        self.vacancy_list_container = self.page.locator(".styles_vacancy_list_wrapper__OFLB1")
 
     def get_vacancy_cards_count(self) -> int:
         """Sahifadagi vakansiya kartochkalar sonini qaytaradi"""
@@ -48,19 +48,19 @@ class VacancyListPage(BasePage):
     def scroll_by_pixels(self, pixels: int = 500):
         """
         Ma'lum pixel miqdoriga scroll qilish
-        Mouse'ni vakansiya kartochkasi ustiga olib borib, keyin scroll qiladi
+        Vakansiyalar ro'yxati konteynerida scroll qiladi
         """
         self.logger.info(f"{pixels}px ga scroll qilish...")
         try:
-            # Birinchi vakansiya kartochkasiga mouse hover qilish
-            first_card = self.vacancy_cards.first
-            first_card.hover()
-            self.logger.info("Mouse vakansiya ustiga olib borildi")
-
-            # Scroll qilish
-            self.page.mouse.wheel(0, pixels)
+            # Container'ga scroll qilish
+            scroll_result = self.vacancy_list_container.evaluate(f"""(element) => {{
+                const before = element.scrollTop;
+                element.scrollBy(0, {pixels});
+                const after = element.scrollTop;
+                return {{before: before, after: after, scrollHeight: element.scrollHeight, clientHeight: element.clientHeight}};
+            }}""")
+            self.logger.info(f"Scroll: {scroll_result['before']}px → {scroll_result['after']}px (total: {scroll_result['scrollHeight']}px)")
             self.page.wait_for_timeout(500)
-            self.logger.info(f"{pixels}px scroll muvaffaqiyatli")
         except Exception as e:
             self.logger.error(f"Scroll qilishda xatolik: {e}")
             raise

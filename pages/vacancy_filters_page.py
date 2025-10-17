@@ -26,15 +26,42 @@ class VacancyFiltersPage(BasePage):
                 self.logger.info("Filterlar paneli allaqachon ochiq")
                 return
 
-            # If not open, click the filter button
-            filter_button = self.page.locator(f"xpath={self.filter_button_xpath}")
+            # Try multiple methods to find and click filter button
+            # Method 1: XPath
+            try:
+                filter_button = self.page.locator(f"xpath={self.filter_button_xpath}")
+                if filter_button.is_visible(timeout=3000):
+                    filter_button.click()
+                    self.page.wait_for_timeout(2000)
+                    self.logger.info("Filterlar paneli ochildi (XPath)")
+                    return
+            except:
+                pass
 
-            if filter_button.is_visible(timeout=5000):
-                filter_button.click()
-                self.page.wait_for_timeout(2000)  # Filterlar ochilishini kutish
-                self.logger.info("Filterlar paneli ochildi")
-            else:
-                self.logger.warning("Filter tugmasi topilmadi")
+            # Method 2: Text-based (for headless mode)
+            try:
+                filter_button = self.page.get_by_role("button").filter(has_text="Filter")
+                if filter_button.is_visible(timeout=3000):
+                    filter_button.click()
+                    self.page.wait_for_timeout(2000)
+                    self.logger.info("Filterlar paneli ochildi (Text)")
+                    return
+            except:
+                pass
+
+            # Method 3: Aria-label or other attributes
+            try:
+                filter_button = self.page.locator("button:has-text('Filter')")
+                if filter_button.is_visible(timeout=3000):
+                    filter_button.click()
+                    self.page.wait_for_timeout(2000)
+                    self.logger.info("Filterlar paneli ochildi (has-text)")
+                    return
+            except:
+                pass
+
+            self.logger.warning("Filter tugmasi topilmadi - filterlar allaqachon ochiq bo'lishi mumkin")
+
         except Exception as e:
             self.logger.warning(f"Filterlarni ochishda xatolik: {e}")
             # Don't raise - filters might already be open

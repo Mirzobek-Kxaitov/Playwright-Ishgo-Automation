@@ -20,51 +20,69 @@ class VacancyFiltersPage(BasePage):
         """Filterlar panelini ochish - Filter button orqali"""
         self.logger.info("Filterlar paneli ochilmoqda...")
         try:
-            # Check if filters are already open by checking for any filter dropdown
-            salary_dropdown = self.page.get_by_text("Maosh", exact=True).first
-            if salary_dropdown.is_visible(timeout=2000):
-                self.logger.info("Filterlar paneli allaqachon ochiq")
-                return
+            # Check if filters are already open
+            try:
+                salary_dropdown = self.page.get_by_text("Maosh", exact=True).first
+                if salary_dropdown.is_visible(timeout=2000):
+                    self.logger.info("Filterlar paneli allaqachon ochiq")
+                    return
+            except:
+                pass
 
-            # Try multiple methods to find and click filter button
-            # Method 1: XPath
+            # Method 1: XPath (works in headed mode)
             try:
                 filter_button = self.page.locator(f"xpath={self.filter_button_xpath}")
-                if filter_button.is_visible(timeout=3000):
+                if filter_button.is_visible(timeout=2000):
                     filter_button.click()
                     self.page.wait_for_timeout(2000)
                     self.logger.info("Filterlar paneli ochildi (XPath)")
-                    return
-            except:
-                pass
 
-            # Method 2: Text-based (for headless mode)
+                    # Verify filters opened
+                    if self.page.get_by_text("Maosh", exact=True).first.is_visible(timeout=2000):
+                        return
+            except Exception as e:
+                self.logger.debug(f"XPath metodi ishlamadi: {e}")
+
+            # Method 2: Button by index (headless mode uchun - Button 7)
+            # In headless mode, filter button is usually the 7th button
             try:
-                filter_button = self.page.get_by_role("button").filter(has_text="Filter")
-                if filter_button.is_visible(timeout=3000):
+                all_buttons = self.page.locator("button").all()
+                if len(all_buttons) >= 7:
+                    filter_button = all_buttons[6]  # Button 7 (index 6)
                     filter_button.click()
                     self.page.wait_for_timeout(2000)
-                    self.logger.info("Filterlar paneli ochildi (Text)")
-                    return
-            except:
-                pass
 
-            # Method 3: Aria-label or other attributes
+                    # Verify filters opened
+                    if self.page.get_by_text("Maosh", exact=True).first.is_visible(timeout=2000):
+                        self.logger.info("Filterlar paneli ochildi (Button 7 - headless)")
+                        return
+            except Exception as e:
+                self.logger.debug(f"Button 7 metodi ishlamadi: {e}")
+
+            # Method 3: Try buttons with empty text (icon buttons)
             try:
-                filter_button = self.page.locator("button:has-text('Filter')")
-                if filter_button.is_visible(timeout=3000):
-                    filter_button.click()
-                    self.page.wait_for_timeout(2000)
-                    self.logger.info("Filterlar paneli ochildi (has-text)")
-                    return
-            except:
-                pass
+                all_buttons = self.page.locator("button").all()
+                for i, btn in enumerate(all_buttons):
+                    try:
+                        text = btn.inner_text(timeout=500)
+                        # Filter button usually has no text (icon only)
+                        if text.strip() == "" and btn.is_visible(timeout=1000):
+                            btn.click()
+                            self.page.wait_for_timeout(2000)
 
-            self.logger.warning("Filter tugmasi topilmadi - filterlar allaqachon ochiq bo'lishi mumkin")
+                            # Check if filters opened
+                            if self.page.get_by_text("Maosh", exact=True).first.is_visible(timeout=1000):
+                                self.logger.info(f"Filterlar paneli ochildi (Button {i+1})")
+                                return
+                    except:
+                        continue
+            except Exception as e:
+                self.logger.debug(f"Icon button iteration metodi ishlamadi: {e}")
+
+            self.logger.warning("Filter tugmasi topilmadi - filterlar ochilmadi")
 
         except Exception as e:
             self.logger.warning(f"Filterlarni ochishda xatolik: {e}")
-            # Don't raise - filters might already be open
             pass
 
     # ==================== Maosh filtri ====================

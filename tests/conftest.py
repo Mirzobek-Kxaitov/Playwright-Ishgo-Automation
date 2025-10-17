@@ -45,6 +45,12 @@ def authenticated_page(page: Page, login_page: LoginPage) -> Page:
     login_page.navigate()
     login_page.login(PHONE_NUMBER)
     logger.info("authenticated_page fixture: Login muvaffaqiyatli yakunlandi")
+
+    # Wait for page to fully load (especially for headless mode)
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(3000)  # Additional wait for dynamic content
+    logger.info("authenticated_page fixture: Sahifa to'liq yuklandi")
+
     return page
 
 

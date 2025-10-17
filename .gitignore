@@ -95,3 +95,12 @@ venv.bak/
 # Playwright
 test-results/
 playwright-report/
+*.png
+*.mp4
+videos/
+screenshots/
+
+# Debug files
+debug_*.png
+map_*.png
+filter_*.png

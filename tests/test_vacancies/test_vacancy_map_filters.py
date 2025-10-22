@@ -136,15 +136,15 @@ def test_employment_type_filter_on_map(authenticated_page: Page):
 
     # Bandlik turi filtri variantlari
     employment_types = [
-        "To'liq bandlik",
+        "To‘liq bandlik",
         "Vaqtincha ish",
         "Loyihaviy ish",
-        "Qo'shimcha ish",
+        "Qo‘shimcha ish",
         "Mavsumiy ish",
         "Qisman bandlik",
         "Frilans",
         "Amaliyot",
-        "Ko'ngilli ish"
+        "Ko‘ngilli ish"
     ]
 
     for employment_type in employment_types:
@@ -252,12 +252,12 @@ def test_sort_filter_on_map(authenticated_page: Page):
 
     # Saralash filtri variantlari
     sort_options = [
-        "Joylangan sana bo'yicha (Yangi)",
-        "Joylangan sana bo'yicha (Eski)",
-        "Maosh bo'yicha (O'sish tartibida)",
-        "Maosh bo'yicha (Kamayish tartibida)",
-        "Ommaboplik bo'yicha (Ko'p ko'rilgan)",
-        "Ommaboplik bo'yicha (Ko'p murojaat qilingan)"
+        "Joylangan sana bo‘yicha (Yangi)",
+        "Joylangan sana bo‘yicha (Eski)",
+        "Maosh bo‘yicha (O‘sish tartibida)",
+        "Maosh bo‘yicha (Kamayish tartibida)",
+        "Ommaboplik bo‘yicha (Ko‘p ko‘rilgan)",
+        "Ommaboplik bo‘yicha (Ko‘p murojaat qilingan)"
     ]
 
     # Dastlabki vakansiyalar sonini olish

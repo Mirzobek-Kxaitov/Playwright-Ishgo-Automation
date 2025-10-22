@@ -14,7 +14,8 @@ class BasePage:
         full_url = f"{self.base_url}{path}"
         self.logger.info(f"Sahifaga o'tilmoqda: {full_url}")
         try:
-            self.page.goto(full_url)
+            # Timeout 60 sekundga oshirildi (sekin serverlar uchun)
+            self.page.goto(full_url, timeout=60000)
             self.logger.info(f"Sahifa muvaffaqiyatli yuklandi: {full_url}")
         except Exception as e:
             self.logger.error(f"Sahifaga o'tishda xatolik: {full_url} - {e}")

@@ -84,7 +84,6 @@ def test_work_type_filter(authenticated_page: Page):
         # Dastlabki holatni olish
         initial_count = filters_page.get_filtered_vacancies_count()
         print(f"Dastlab: {initial_count} ta vakansiya")
-
         # Filter variantini tanlash
         filters_page.select_work_type(work_type)
 
